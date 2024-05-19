@@ -1,4 +1,4 @@
-#!/user/bin/python
+#!/usr/bin/python3
 """ unittesting for the base model """
 
 from models.base_model import BaseModel
