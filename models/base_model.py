@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""Base Model"""
 
 from uuid import uuid4
 from datetime import datetime
@@ -11,7 +12,11 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """ serialize and deserialize class """
 
+<<<<<<< HEAD
         """ Initialize this if nothing passed """
+=======
+        """initialize this if nothing passed"""
+>>>>>>> master
         if not kwargs:
             self.id = str(uuid4())
             self.created_at = datetime.utcnow()
@@ -28,6 +33,7 @@ class BaseModel:
             if key == "__class__":
                 continue
             setattr(self, key, val)
+<<<<<<< HEAD
 
         if "created_at" in kwargs:
             self.created_at = datetime.strptime(
@@ -35,6 +41,14 @@ class BaseModel:
         if "updated_at" in kwargs:
             self.updated_at = datetime.strptime(
                 kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
+=======
+        if "created_at" in kwargs:
+            self.created_at = datetime.strptime(
+                    kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
+        if "updated_at" in kwargs:
+            self.updated_at = datetime.strptime(
+                    kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
+>>>>>>> master
 
     def __str__(self):
         """overide str representation of self"""
