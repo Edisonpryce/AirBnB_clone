@@ -1,17 +1,19 @@
 #!/usr/bin/python3
+"""Base Model"""
 
 from uuid import uuid4
 from datetime import datetime
 import models
 
-class BaseModeel:
+
+class BaseModel:
     """Base class to be inheritted by all classes"""
 
     def __init__(self, *args, **kwargs):
         """ serialize and deserialize class """
 
         """initialize this if nothing passed"""
-        if kwargs == {}:
+        if not kwargs:
             self.id = str(uuid4())
             self.created_at = datetime.utcnow()
             self.updated_at = datetime.utcnow()
@@ -23,25 +25,24 @@ class BaseModeel:
             kwargs['id'] = str(uuid4())
         self.id = kwargs['id']
 
-        for Key, val in kwargs.items():
-            if Key == "__class_":
+        for key, val in kwargs.items():
+            if key == "__class__":
                 continue
+            setattr(self, key, val)
         if "created_at" in kwargs:
             self.created_at = datetime.strptime(
-                    kwargs['created_at'],
-                    '%Y-%m-%dT%H:%M:%S.%f')
+                    kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
         if "updated_at" in kwargs:
             self.updated_at = datetime.strptime(
-                    kwargs['updated_at'],
-                    '%Y-%m-%dT%H:%M:%S.%f')
+                    kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
 
     def __str__(self):
         """overide str representation of self"""
         fmt = "[{}] ({}) {}"
         return fmt.format(
-                type(self).__name__,
-                self.id,
-                self.__dict__)
+            type(self).__name__,
+            self.id,
+            self.__dict__)
 
     def save(self):
         """updating last updated variable"""

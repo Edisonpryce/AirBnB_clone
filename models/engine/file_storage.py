@@ -6,9 +6,9 @@ The method deployed here is JSON serialization adn deserialization
 """
 
 import json
-from datetime import datetime
 from json.decoder import JSONDecodeError
 from models.base_model import BaseModel
+
 
 class FileStorage:
     """
@@ -18,24 +18,16 @@ class FileStorage:
     """private class varaibles"""
     __objects: dict = {}
     __file_path: str = 'file.json'
-    models = (
-            "BaseModel",
-            "User", "City", "State", "Place",
-            "Amenity", "Review"
-            )
-
-    def __init__(self):
-        """empty constructor"""
-        pass
 
     def all(self):
         """Intended to return all instances stored"""
         return FileStorage.__objects
 
     def new(self, obj):
-        """Intended stores a new Object"""
+        """Intended to store a new Object"""
         key = "{}.{}".format(type(obj).__name__, obj.id)
         FileStorage.__objects[key] = obj
+        return key
 
     def save(self):
         """serializes objects stored and persist in file"""
