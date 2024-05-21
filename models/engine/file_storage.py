@@ -8,6 +8,12 @@ The method deployed here is JSON serialization adn deserialization
 import json
 from json.decoder import JSONDecodeError
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 class FileStorage:
@@ -36,18 +42,29 @@ class FileStorage:
             for key, val in self.__objects.items()
         }
         with open(FileStorage.__file_path, "w") as f:
-            f.write(json.dumps(serialized))
+            json.dump(serialized, f)
 
     def reload(self):
         """de-serialize persisted objects"""
         try:
             deserialized = {}
             with open(FileStorage.__file_path, "r") as f:
-                deserialized = json.loads(f.read())
-            FileStorage.__objects = {
-                key:
-                    eval(obj["__class__"])(**obj)
-                    for key, obj in deserialized.items()}
+                deserialized = json.load(f)
+            for key, obj in deserialized.items():
+                cls_name = obj["__class__"]
+                if cls_name == "BaseModel":
+                    FileStorage.__objects[key] = BaseModel(**obj)
+                elif cls_name == "User":
+                    FileStorage.__objects[key] = User(**obj)
+                elif cls_name == "State":
+                    FileStorage.__objects[key] = State(**obj)
+                elif cls_name == "City":
+                    FileStorage.__objects[key] = City(**obj)
+                elif cls_name == "Amenity":
+                    FileStorage.__objects[key] = Amenity(**obj)
+                elif cls_name == "Place":
+                    FileStorage.__objects[key] = Place(**obj)
+                elif cls_name == "Review":
+                    FileStorage.__objects[key] = Review(**obj)
         except (FileNotFoundError, JSONDecodeError):
-            # There would be no need for error
             pass
