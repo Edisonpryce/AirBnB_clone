@@ -14,6 +14,29 @@ section.filters {
     position: relative;
 }
 
+div.locations,
+div.amenities {
+    height: 100%;
+    width: 25%;
+    margin-left: 30px;
+}
+
+div.locations {
+    border-right: 1px solid #DDDDDD;
+}
+
+
+h3 {
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+h4 {
+    margin-top: 0;
+    font-weight: 400;
+    font-size: 14px;
+}
+
 button {
     font-size: 18px;
     background-color: #FF5A5F;
@@ -30,3 +53,4 @@ button {
 button:hover {
     opacity: 0.9;
 }
+
