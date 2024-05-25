@@ -2,6 +2,8 @@
 """Entry point of command interpreter"""
 
 import cmd
+import re
+import json
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -157,6 +159,63 @@ class HBNBCommand(cmd.Cmd):
 
         setattr(instance, attr_name, attr_value)
         instance.save()
+
+    def default(self, arg):
+        """Default behavior for cmd module when input is invalid"""
+        argdict = {
+            "all": self.do_all,
+            "count": self.do_count,
+            "show": self.do_show,
+            "destroy": self.do_destroy,
+            "update": self.do_update
+        }
+        match = re.search(r"^(\w+)\.(\w+)\((.*)\)$", arg)
+        if match:
+            class_name, method, params = match.groups()
+            if class_name in HBNBCommand.__classes and method in argdict:
+                if method == "update":
+                    params_match = re.match(r'\"(.*?)\", (\{.*\})', params)
+                    if params_match:
+                        instance_id, dict_attrs = params_match.groups()
+                        try:
+                            dict_attrs = json.loads(dict_attrs.replace
+                                                    ("'", '"'))
+                        except json.JSONDecodeError:
+                            print("** invalid dictionary format **")
+                            return
+                        for attr_name, attr_value in dict_attrs.items():
+                            command = (f"{class_name} {instance_id} "
+                                       f"({attr_name} {attr_value}")
+                            self.do_update(command)
+                        return
+                    params_match = re.match(r'\"(.*?)\", \"(.*?)\", (.+)',
+                                            params)
+                    if params_match:
+                        instance_id, attr_name, attr_value = (
+                            params_match.groups())
+                        command = (f"{class_name} {instance_id} "
+                                   f"{attr_name} {attr_value}")
+                        argdict[method](command)
+                        return
+                else:
+                    params = params.strip('"')
+                    command = f"{class_name} {params}"
+                    argdict[method](command)
+                    return
+        print("*** Unknown syntax: {}".format(arg))
+
+    def do_count(self, arg):
+        """Counts the number of instances of a class"""
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        if args[0] not in HBNBCommand.__classes:
+            print("** class doesn't exist **")
+            return
+        count = sum(1 for key in storage.all().keys()
+                    if key.startswith(args[0]))
+        print(count)
 
 
 if __name__ == '__main__':
